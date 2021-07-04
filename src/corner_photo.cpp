@@ -165,20 +165,19 @@ void on_mouse(int EVENT, int x, int y, int flags, void *userdata)
     // Mat hh;
     // hh = *(Mat *)userdata;
     // Point p(x, y);
+
+    static int count = 1;
+
     switch (EVENT)
     {
-    case cv::EVENT_LBUTTONDOWN:
+    case cv::EVENT_LBUTTONDBLCLK:
     {
-
-        // printf("b=%d\t", hh.at<Vec3b>(p)[0]);
-        // printf("g=%d\t", hh.at<Vec3b>(p)[1]);
-        // printf("r=%d\n", hh.at<Vec3b>(p)[2]);
-        // circle(hh, p, 2, Scalar(255), 3);
         cv::Point p2d;
         p2d.x = x;
         p2d.y = y;
         corners.push_back(p2d);
-        std::cout << "click :" << x << " , " << y << std::endl;
+        std::cout << "corner: " << count <<  ": click  :" << x << " , " << y << std::endl;
+        ++count;
     }
     break;
     }
