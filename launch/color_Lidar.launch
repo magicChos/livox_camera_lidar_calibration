@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
 
-  <param name="intrinsic_path" value="$(find camera_lidar_calibration)/../../parameters/intrinsic.txt" /> <!-- intrinsic file -->
-  <param name="extrinsic_path" value="$(find camera_lidar_calibration)/../parameters/extrinsic.txt" /> <!-- extrinsic file -->
+  <param name="intrinsic_path" value="$(find camera_lidar_calibration)/parameters/intrinsic.txt" /> <!-- intrinsic file -->
+  <param name="extrinsic_path" value="$(find camera_lidar_calibration)/parameters/extrinsic.txt" /> <!-- extrinsic file -->
 
   <param name="input_bag_path" value="/home/han/Desktop/8-3-calib/data/lidar/15.bag" /> <!-- rosbag to give the lidar info -->
   <param name="input_photo_path" value="/home/han/Desktop/8-3-calib/data/photo/15.jpg" /> <!-- photo to get RGB info -->
