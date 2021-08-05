@@ -143,28 +143,12 @@ int main(int argc, char **argv)
 
     vector<float> intrinsic;
     getIntrinsic(intrinsic_path, intrinsic);
-    std::cout << "@test print intrinsic: ----------" << std::endl;
-    for(auto i : intrinsic)
-    {
-        std::cout << i << std::endl;
-    }
+
     vector<float> distortion;
     getDistortion(intrinsic_path, distortion);
-    std::cout << "@test print distortion:------------" << std::endl;
-    for(auto i: distortion)
-    {
-        std::cout << i << std::endl;
-    }
-
 
     vector<float> extrinsic;
     getExtrinsic(extrinsic_path, extrinsic);
-
-    std::cout << "@test extrinsic: ---------" << std::endl;
-    for(auto i: extrinsic)
-    {
-        std::cout << i << std::endl;
-    }
 
     // set the intrinsic and extrinsic matrix
     double matrix1[3][3] = {{intrinsic[0], intrinsic[1], intrinsic[2]}, {intrinsic[3], intrinsic[4], intrinsic[5]}, {intrinsic[6], intrinsic[7], intrinsic[8]}};
@@ -173,8 +157,6 @@ int main(int argc, char **argv)
     // transform into the opencv matrix
     cv::Mat matrix_in(3, 3, CV_64F, matrix1);
     cv::Mat matrix_out(3, 4, CV_64F, matrix2);
-
-
 
     // set intrinsic parameters of the camera
     cv::Mat camera_matrix = cv::Mat::eye(3, 3, CV_64F);
@@ -199,8 +181,7 @@ int main(int argc, char **argv)
 
     int row = src_img.rows;
     int col = src_img.cols;
-    // cout << row << endl;
-    // cout << col << endl << endl;
+
     vector<vector<int>> color_vector;
     color_vector.resize(row * col);
     for (unsigned int i = 0; i < color_vector.size(); ++i)

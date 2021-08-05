@@ -70,5 +70,8 @@ target_link_libraries(projectCloud ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_executable(colorLidar src/color_lidar_display.cpp src/common.h)
 target_link_libraries(colorLidar ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${CERES_LIBRARIES})
 
+add_executable(color_lidar src/color_lidar.cpp src/synchronizer.cpp)
+target_link_libraries(color_lidar ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${CERES_LIBRARIES})
+
 
 
