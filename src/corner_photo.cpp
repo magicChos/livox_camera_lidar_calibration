@@ -116,8 +116,8 @@ int main(int argc, char **argv)
     cv::namedWindow("source");
     cv::setMouseCallback("source", on_mouse);
 
-    cv::imshow("source", src_img);
-    cv::waitKey(0);
+    // cv::imshow("source-haha", src_img);
+    // cv::waitKey(0);
 
     cout << "Give the corner coordinate, finish by 0 0" << endl;
     while (1)
