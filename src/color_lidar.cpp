@@ -47,8 +47,8 @@ int main(int argc, char **argv)
 
     ROS_INFO("\033[1;32m---->\033[0m Sync msgs node Started.");
     std::string cloud_topic = "/livox/lidar";
-    std::string image_topic = "/camera/color_image_raw";
-    Synchronizer wode(cloud_topic, image_topic, intrinsic_path, extrinsic_path, n);
+    std::string image_topic = "/camera/image";
 
+    Synchronizer wode(cloud_topic, image_topic, intrinsic_path, extrinsic_path, n);
     return 0;
 }

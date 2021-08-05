@@ -43,7 +43,7 @@ private:
 private:
     cv::Mat camera_matrix = cv::Mat::eye(3, 3, CV_64F);
     cv::Mat distortion_coef = cv::Mat::zeros(5, 1, CV_64F);
-    cv::Mat matrix_in, matrix_out;
+    static cv::Mat matrix_in, matrix_out;
     std::string m_cloud_topic_name;
     std::string m_image_topic_name;
     std::string m_intrinsic_path;
@@ -54,3 +54,4 @@ private:
     ros::NodeHandle private_node_;
     cv::Mat map1, map2;
 };
+

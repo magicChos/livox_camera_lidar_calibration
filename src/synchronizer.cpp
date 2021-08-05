@@ -1,6 +1,9 @@
 #include "synchronizer.h"
 #include "common.h"
 
+cv::Mat Synchronizer::matrix_in = cv::Mat::eye(3, 3, CV_64F);
+cv::Mat Synchronizer::matrix_out = cv::Mat::eye(3, 4, CV_64F);
+
 Synchronizer::Synchronizer(const std::string cloud_topic, const std::string image_topic, const std::string &intrisc_path, const std::string &extrisc_path, const ros::NodeHandle &nh)
     : m_cloud_topic_name(cloud_topic),
       m_image_topic_name(image_topic),
@@ -13,6 +16,7 @@ Synchronizer::Synchronizer(const std::string cloud_topic, const std::string imag
     pubImage = nh_.advertise<sensor_msgs::Image>("/Syn/image", 1);
 
     initParams(m_intrinsic_path, m_extrinsic_path);
+
     message_filters::Subscriber<sensor_msgs::Image> image_sub(nh_, m_image_topic_name, 1);
     message_filters::Subscriber<sensor_msgs::PointCloud2> velodyne_sub(nh_, m_cloud_topic_name, 1);
     ROS_INFO("----------------------------");
@@ -34,14 +38,8 @@ void Synchronizer::initParams(const string &intrinsic_path, const string &extrin
     vector<float> extrinsic;
     getExtrinsic(extrinsic_path, extrinsic);
 
-    // set the intrinsic and extrinsic matrix
-    double matrix1[3][3] = {{intrinsic[0], intrinsic[1], intrinsic[2]}, {intrinsic[3], intrinsic[4], intrinsic[5]}, {intrinsic[6], intrinsic[7], intrinsic[8]}};
-    double matrix2[3][4] = {{extrinsic[0], extrinsic[1], extrinsic[2], extrinsic[3]}, {extrinsic[4], extrinsic[5], extrinsic[6], extrinsic[7]}, {extrinsic[8], extrinsic[9], extrinsic[10], extrinsic[11]}};
-
-    // transform into the opencv matrix
-
-    matrix_in = cv::Mat(3, 3, CV_64F, matrix1);
-    matrix_out = cv::Mat(3, 4, CV_64F, matrix2);
+    matrix_in = (cv::Mat_<double>(3, 3) << intrinsic[0], intrinsic[1], intrinsic[2], intrinsic[3], intrinsic[4], intrinsic[5], intrinsic[6], intrinsic[7], intrinsic[8]);
+    matrix_out = (cv::Mat_<double>(3, 4) << extrinsic[0], extrinsic[1], extrinsic[2], extrinsic[3], extrinsic[4], extrinsic[5], extrinsic[6], extrinsic[7], extrinsic[8], extrinsic[9], extrinsic[10], extrinsic[11]);
 
     camera_matrix.at<double>(0, 0) = intrinsic[0];
     camera_matrix.at<double>(0, 2) = intrinsic[2];
@@ -70,6 +68,7 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
 
     pcl::PCLPointCloud2 pcl_pc2;
     pcl_conversions::toPCL(*ori_pointcloud, pcl_pc2);
+
     pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::fromPCLPointCloud2(pcl_pc2, *temp_cloud);
 
@@ -105,10 +104,12 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     cloud->is_dense = false;
     cloud->height = 1;
-    cloud->width = syn_pointcloud.data.size();
+    cloud->width = temp_cloud->points.size();
     cloud->points.resize(cloud->width);
-    for (uint64_t i = 0; i < cloud->points.size() && nh_.ok(); ++i)
+
+    for (size_t i = 0; i < cloud->points.size() && nh_.ok(); ++i)
     {
+
         float x = temp_cloud->points[i].x;
         float y = temp_cloud->points[i].y;
         float z = temp_cloud->points[i].z;
@@ -126,6 +127,7 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
 
         // set the RGB for the cloud point
         int RGB[3] = {0, 0, 0};
+
         getColor(matrix_in, matrix_out, x, y, z, row, col, color_vector, RGB);
         // ignore the unexisting point
         if (RGB[0] == 0 && RGB[1] == 0 && RGB[2] == 0)
@@ -140,12 +142,12 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
 
     sensor_msgs::PointCloud2 syn_pointcloud_output;
     pcl::toROSMsg(*cloud, syn_pointcloud_output);
-    syn_pointcloud_output.header.frame_id = "livox_frame";
-    syn_pointcloud_output.header.stamp = syn_pointcloud_output.header.stamp;
+    syn_pointcloud_output.header.frame_id = syn_pointcloud.header.frame_id;
+    syn_pointcloud_output.header.stamp = syn_pointcloud.header.stamp;
 
     // 发布彩色点云
     pubPointCloud.publish(syn_pointcloud_output);
-    // pubImage.publish(syn_image);
+    pubImage.publish(syn_image);
 }
 
 // use extrinsic and intrinsic to get the corresponding U and V
