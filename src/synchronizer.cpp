@@ -138,6 +138,8 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
         cloud->points[i].r = RGB[0];
         cloud->points[i].g = RGB[1];
         cloud->points[i].b = RGB[2];
+
+        std::cout << "R: " << RGB[0] << " , G: " << RGB[1] << " , B: " << RGB[2] << std::endl;
     }
 
     sensor_msgs::PointCloud2 syn_pointcloud_output;
