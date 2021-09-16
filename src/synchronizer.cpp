@@ -4,6 +4,8 @@
 cv::Mat Synchronizer::matrix_in = cv::Mat::eye(3, 3, CV_64F);
 cv::Mat Synchronizer::matrix_out = cv::Mat::eye(3, 4, CV_64F);
 
+typedef PointXYZIRGB PointType;
+
 Synchronizer::Synchronizer(const std::string cloud_topic, const std::string image_topic, const std::string &intrisc_path, const std::string &extrisc_path, const ros::NodeHandle &nh)
     : m_cloud_topic_name(cloud_topic),
       m_image_topic_name(image_topic),
@@ -69,7 +71,7 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
     pcl::PCLPointCloud2 pcl_pc2;
     pcl_conversions::toPCL(*ori_pointcloud, pcl_pc2);
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZI>::Ptr temp_cloud(new pcl::PointCloud<pcl::PointXYZI>);
     pcl::fromPCLPointCloud2(pcl_pc2, *temp_cloud);
 
     cv::Mat src_img = cv_bridge::toCvShare(ori_image, "bgr8")->image;
@@ -101,7 +103,7 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
 
     // to do
     // 将RGB赋值给点云
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud<PointType>::Ptr cloud(new pcl::PointCloud<PointType>);
     cloud->is_dense = false;
     cloud->height = 1;
     cloud->width = temp_cloud->points.size();
@@ -124,6 +126,7 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
         cloud->points[i].x = x;
         cloud->points[i].y = y;
         cloud->points[i].z = z;
+        cloud->points[i].intensity = temp_cloud->points[i].intensity;
 
         // set the RGB for the cloud point
         int RGB[3] = {0, 0, 0};

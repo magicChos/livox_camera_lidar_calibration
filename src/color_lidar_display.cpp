@@ -60,6 +60,8 @@ void loadPointcloudFromROSBag(const string &bag_path)
             break;
         }
     }
+
+    ROS_INFO("lidar_datas size: %d" , lidar_datas.size());
 }
 
 // use extrinsic and intrinsic to get the corresponding U and V
@@ -272,6 +274,8 @@ int main(int argc, char **argv)
             ROS_INFO("Finish all the process");
             break;
         }
+
+        ROS_INFO("---process %d" , num);
     }
 
     std::cout << "-----------------------------" << std::endl;
