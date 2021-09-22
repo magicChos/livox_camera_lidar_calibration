@@ -141,8 +141,6 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
         cloud->points[i].r = RGB[0];
         cloud->points[i].g = RGB[1];
         cloud->points[i].b = RGB[2];
-
-        std::cout << "R: " << RGB[0] << " , G: " << RGB[1] << " , B: " << RGB[2] << std::endl;
     }
 
     sensor_msgs::PointCloud2 syn_pointcloud_output;
@@ -186,4 +184,11 @@ void Synchronizer::getColor(const cv::Mat &matrix_in, const cv::Mat &matrix_out,
         RGB[1] = color_vector[index][1];
         RGB[2] = color_vector[index][2];
     }
+    else
+    {
+        RGB[0] = 255;
+        RGB[1] = 255;
+        RGB[2] = 255;
+    }
+
 }
