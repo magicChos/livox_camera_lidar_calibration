@@ -61,7 +61,7 @@ void Synchronizer::initParams(const string &intrinsic_path, const string &extrin
 
 void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointcloud, const sensor_msgs::Image::ConstPtr &ori_image)
 {
-    cout << "*******************" << endl;
+    cout << "@test*******************" << endl;
     sensor_msgs::PointCloud2 syn_pointcloud = *ori_pointcloud;
     sensor_msgs::Image syn_image = *ori_image;
 
@@ -151,6 +151,8 @@ void Synchronizer::callback(const sensor_msgs::PointCloud2::ConstPtr &ori_pointc
     // 发布彩色点云
     pubPointCloud.publish(syn_pointcloud_output);
     pubImage.publish(syn_image);
+
+    std::cout << "@test publish finished" << std::endl;
 }
 
 // use extrinsic and intrinsic to get the corresponding U and V
