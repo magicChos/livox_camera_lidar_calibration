@@ -50,6 +50,7 @@ public:
 
     static ceres::CostFunction *Create(PnPData p)
     {
+        // 2:表示输出维度，4:四元数，3:平移量
         return (new ceres::AutoDiffCostFunction<external_cali, 2, 4, 3>(new external_cali(p)));
     }
 
