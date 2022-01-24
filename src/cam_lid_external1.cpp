@@ -16,6 +16,8 @@
 using namespace std;
 
 typedef pcl::PointXYZRGB PointType;
+
+// 记录相机内参
 Eigen::Matrix3d inner;
 string lidar_path, photo_path, intrinsic_path, extrinsic_path;
 int error_threshold;
@@ -38,7 +40,9 @@ public:
         Eigen::Quaternion<T> q_incre{_q[3], _q[0], _q[1], _q[2]};
         Eigen::Matrix<T, 3, 1> t_incre{_t[0], _t[1], _t[2]};
 
+        // lidar坐标系下点三维坐标
         Eigen::Matrix<T, 3, 1> p_l(T(pd.x), T(pd.y), T(pd.z));
+        // lidar点在相机坐标系下坐标
         Eigen::Matrix<T, 3, 1> p_c = q_incre.toRotationMatrix() * p_l + t_incre;
         Eigen::Matrix<T, 3, 1> p_2 = innerT * p_c;
 
